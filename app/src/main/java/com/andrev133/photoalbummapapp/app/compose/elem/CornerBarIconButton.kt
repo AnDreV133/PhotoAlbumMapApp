@@ -11,6 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
+import com.andrev133.photoalbummapapp.app.ui.theme.endRoundedRect
+import com.andrev133.photoalbummapapp.app.ui.theme.startRoundedRect
 
 enum class CornerBarButtonArrangement {
     START,
@@ -49,23 +51,13 @@ private fun Modifier.backgroundShapeBySide(
 ) = when (arrangement) {
     CornerBarButtonArrangement.START -> this
         .background(
-            shape = RoundedCornerShape(
-                topStart = 0.dp,
-                bottomStart = 0.dp,
-                topEnd = 16.dp,
-                bottomEnd = 16.dp
-            ),
+            shape = MaterialTheme.shapes.endRoundedRect,
             color = color
         )
 
     CornerBarButtonArrangement.END -> this
         .background(
-            shape = RoundedCornerShape(
-                topStart = 16.dp,
-                bottomStart = 16.dp,
-                topEnd = 0.dp,
-                bottomEnd = 0.dp
-            ),
+            shape = MaterialTheme.shapes.startRoundedRect,
             color = color
         )
 }

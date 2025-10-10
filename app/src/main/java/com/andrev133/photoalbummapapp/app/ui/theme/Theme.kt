@@ -2,13 +2,16 @@ package com.andrev133.photoalbummapapp.app.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 
 private val DarkColorScheme = lightColorScheme(
     background = Color.Black,
@@ -20,6 +23,22 @@ private val DarkColorScheme = lightColorScheme(
 )
 
 private val LightColorScheme = DarkColorScheme
+
+val Shapes.startRoundedRect: RoundedCornerShape
+    get() = RoundedCornerShape(
+        topStart = 16.dp,
+        bottomStart = 16.dp,
+        topEnd = 0.dp,
+        bottomEnd = 0.dp
+    )
+
+val Shapes.endRoundedRect: RoundedCornerShape
+    get() = RoundedCornerShape(
+        topStart = 0.dp,
+        bottomStart = 0.dp,
+        topEnd = 16.dp,
+        bottomEnd = 16.dp
+    )
 
 @Composable
 fun AutoMediaAppTheme(
@@ -41,6 +60,7 @@ fun AutoMediaAppTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
+        shapes = Shapes(),
         content = content
     )
 }

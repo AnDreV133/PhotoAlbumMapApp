@@ -23,12 +23,14 @@ import kotlinx.coroutines.flow.onEach
 import ru.sulgik.mapkit.compose.Placemark
 import ru.sulgik.mapkit.compose.PlacemarkState
 import ru.sulgik.mapkit.compose.YandexMap
+import ru.sulgik.mapkit.compose.YandexMapsComposeExperimentalApi
 import ru.sulgik.mapkit.compose.imageProvider
 import ru.sulgik.mapkit.compose.rememberCameraPositionState
 import ru.sulgik.mapkit.geometry.Point
 import ru.sulgik.mapkit.map.CameraPosition
 
 
+@OptIn(YandexMapsComposeExperimentalApi::class)
 @Composable
 fun MapView(
     modifier: Modifier = Modifier,
@@ -52,7 +54,7 @@ fun MapView(
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_marker),
-                    tint = getColorWithFullAlpha(model.colorCode),
+                    tint = model.color,
                     contentDescription = model.title,
                 )
             }
