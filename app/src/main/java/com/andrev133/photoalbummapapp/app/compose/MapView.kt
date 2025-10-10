@@ -1,27 +1,70 @@
 package com.andrev133.photoalbummapapp.app.compose
 
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
+import com.andrev133.photoalbummapapp.R
 import com.andrev133.photoalbummapapp.data.SharedPrefKeys
 import com.andrev133.photoalbummapapp.data.getSharedPrefByKey
 import com.andrev133.photoalbummapapp.data.setValue
+import com.andrev133.photoalbummapapp.domain.model.PhotoCollectionMarkerModel
+import com.andrev133.photoalbummapapp.domain.usecase.GetAllMarkers
+import com.andrev133.photoalbummapapp.domain.util.getColorWithFullAlpha
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.onEach
+import ru.sulgik.mapkit.compose.Placemark
+import ru.sulgik.mapkit.compose.PlacemarkState
 import ru.sulgik.mapkit.compose.YandexMap
+import ru.sulgik.mapkit.compose.imageProvider
 import ru.sulgik.mapkit.compose.rememberCameraPositionState
 import ru.sulgik.mapkit.geometry.Point
 import ru.sulgik.mapkit.map.CameraPosition
 
 
 @Composable
-fun MapView(modifier: Modifier = Modifier) {
+fun MapView(
+    modifier: Modifier = Modifier,
+    getAllMarkers: GetAllMarkers,
+
+    ) {
     val context = LocalContext.current
     val cameraPositionState = rememberCameraPositionState { }
+    var markerPositionList = remember { listOf<PhotoCollectionMarkerModel>() }
 
     YandexMap(
         modifier = modifier,
         cameraPositionState = cameraPositionState
-    )
+    ) {
+        markerPositionList.forEach { model ->
+            Placemark(
+                state = PlacemarkState(
+                    geometry = Point(model.point.latitude, model.point.longitude),
+                ),
+                contentSize = DpSize(32.dp, 32.dp),
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_marker),
+                    tint = getColorWithFullAlpha(model.colorCode),
+                    contentDescription = model.title,
+                )
+            }
+        }
+
+    }
+
+    LaunchedEffect(Unit) {
+        getAllMarkers().collect { marker ->
+            markerPositionList = marker
+        }
+    }
 
     DisposableEffect(Unit) {
         val sharedPref = context.getSharedPrefByKey(SharedPrefKeys.MAIN_SETTINGS)

@@ -18,6 +18,8 @@ import com.andrev133.photoalbummapapp.BuildConfig
 import com.andrev133.photoalbummapapp.app.compose.FooterBar
 import com.andrev133.photoalbummapapp.app.compose.MapView
 import com.andrev133.photoalbummapapp.app.ui.theme.AutoMediaAppTheme
+import com.andrev133.photoalbummapapp.data.AppDatabase
+import com.andrev133.photoalbummapapp.domain.usecase.GetAllMarkers
 import ru.sulgik.mapkit.MapKit
 import ru.sulgik.mapkit.compose.bindToLifecycleOwner
 import ru.sulgik.mapkit.compose.rememberAndInitializeMapKit
@@ -42,13 +44,18 @@ fun MainScreen() {
 
     rememberAndInitializeMapKit().bindToLifecycleOwner()
 
+    val db = AppDatabase.getInstance(LocalContext.current)
+
+    val getAllMarkers = GetAllMarkers(db.photoCollectionDao())
+
     Scaffold(
         modifier = Modifier
             .fillMaxSize(),
         content = { innerPadding ->
             MapView(
                 modifier = Modifier
-                    .padding(innerPadding)
+                    .padding(innerPadding),
+                getAllMarkers = getAllMarkers
             )
         },
         bottomBar = {

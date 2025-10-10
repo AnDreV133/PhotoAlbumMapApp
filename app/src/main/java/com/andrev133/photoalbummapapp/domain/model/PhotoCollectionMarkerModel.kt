@@ -4,6 +4,7 @@ import com.andrev133.photoalbummapapp.data.entity.PhotoCollectionMarkerEntity
 import com.andrev133.photoalbummapapp.data.relation.CollectionWithPhotosRelation
 import com.andrev133.photoalbummapapp.domain.model.serialise.PointSerialized
 import com.andrev133.photoalbummapapp.domain.model.serialise.toMapKitPoint
+import com.andrev133.photoalbummapapp.domain.util.getPointFromJsonString
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.json.Json
 import ru.sulgik.mapkit.geometry.Point
@@ -21,7 +22,7 @@ fun PhotoCollectionMarkerEntity.toMarker(): PhotoCollectionMarkerModel {
         colorCode = colorCode,
         title = title,
         time = LocalDate.parse(time),
-        point = pointFromJsonString(mapPoint),
+        point = getPointFromJsonString(mapPoint),
         photos = emptyList()
     )
 }
@@ -31,11 +32,7 @@ fun CollectionWithPhotosRelation.toMarker(): PhotoCollectionMarkerModel {
         colorCode = collection.colorCode,
         title = collection.title,
         time = LocalDate.parse(collection.time),
-        point = pointFromJsonString(collection.mapPoint),
+        point = getPointFromJsonString(collection.mapPoint),
         photos = photos.map { PhotoModel(path = it.path) }
     )
 }
-
-private fun pointFromJsonString(str: String): Point = Json
-    .decodeFromString<PointSerialized>(str)
-    .toMapKitPoint()
