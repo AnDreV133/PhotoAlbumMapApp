@@ -1,26 +1,25 @@
 package com.andrev133.photoalbummapapp.data.entity
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 import androidx.room.ForeignKey
 import androidx.room.Index
+import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "photo_collections",
+    tableName = "photo_paths",
     foreignKeys = [
         ForeignKey(
-            entity = LabelEntity::class,
+            entity = PhotoCollectionMarkerEntity::class,
             parentColumns = ["colorCode"],
-            childColumns = ["labelColorCode"],
+            childColumns = ["markerColorCode"],
             onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [Index("labelColorCode")]
+    indices = [Index(value = ["markerColorCode"])]
 )
-data class PhotoCollectionEntity(
+data class PhotoEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    val labelColorCode: Int,
-    val time: String,
-    val mapPoint: String
+    val markerColorCode: Long,
+    val path: String
 )
