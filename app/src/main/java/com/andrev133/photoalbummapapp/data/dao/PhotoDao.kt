@@ -22,12 +22,9 @@ interface PhotoDao {
     @Delete
     suspend fun deletePhotoPath(photoPath: PhotoEntity)
 
-    @Query("SELECT * FROM photo_paths WHERE markerColorCode = :markerColorCode")
-    fun getPhotoPathsByCollection(markerColorCode: Long): Flow<List<PhotoEntity>>
+    @Query("SELECT * FROM photos WHERE id = :id")
+    suspend fun getPhotoById(id: Long): PhotoEntity?
 
-    @Query("SELECT * FROM photo_paths WHERE id = :id")
-    suspend fun getPhotoPathById(id: Long): PhotoEntity?
-
-    @Query("DELETE FROM photo_paths WHERE markerColorCode = :markerColorCode")
-    suspend fun deletePhotoPathsByCollection(markerColorCode: Long)
+    @Query("SELECT * FROM photos WHERE photoCollectionId = :photoCollectionId")
+    suspend fun getPhotoByCollectionId(photoCollectionId: Long): PhotoEntity?
 }

@@ -6,20 +6,20 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "photo_paths",
+    tableName = "photos",
     foreignKeys = [
         ForeignKey(
-            entity = PhotoCollectionMarkerEntity::class,
-            parentColumns = ["colorCode"],
-            childColumns = ["markerColorCode"],
+            entity = PhotoCollectionEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["photoCollectionId"],
             onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [Index(value = ["markerColorCode"])]
+    indices = [Index(value = ["photoCollectionId"])]
 )
 data class PhotoEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    val markerColorCode: Long,
+    val photoCollectionId: Long,
     val path: String
 )
