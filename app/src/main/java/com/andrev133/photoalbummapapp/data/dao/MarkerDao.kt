@@ -7,19 +7,25 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface MarkerDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMarker(label: MarkerEntity)
+    suspend fun insert(label: MarkerEntity)
 
     @Update
-    suspend fun updateMarker(label: MarkerEntity)
+    suspend fun update(label: MarkerEntity)
 
     @Delete
-    suspend fun deleteMarker(label: MarkerEntity)
+    suspend fun delete(label: MarkerEntity)
+
+    @Upsert
+    suspend fun upsert(label: MarkerEntity)
+
+    @Query("DELETE FROM markers WHERE colorCode = :colorCode")
+    suspend fun deleteByColorCode(colorCode: Int)
 
     @Query("SELECT * FROM markers")
     fun getAllMarkers(): Flow<List<MarkerEntity>>
 
     @Query("SELECT * FROM markers WHERE colorCode = :colorCode")
-    suspend fun getMarkerByColorCode(colorCode: String): MarkerEntity?
+    suspend fun getMarkerByColorCode(colorCode: Int): MarkerEntity?
 
     @Query("SELECT * FROM markers WHERE title LIKE :title")
     fun findMarkerByName(title: String): Flow<List<MarkerEntity>>
