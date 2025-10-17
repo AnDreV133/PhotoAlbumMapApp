@@ -1,6 +1,9 @@
 package com.andrev133.photoalbummapapp.domain.model
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import com.andrev133.photoalbummapapp.data.entity.MarkerEntity
+import com.andrev133.photoalbummapapp.data.entity.PhotoCollectionEntity
 import com.andrev133.photoalbummapapp.data.relation.CollectionWithMarkerRelation
 import com.andrev133.photoalbummapapp.data.relation.FullCollectionRelation
 import com.andrev133.photoalbummapapp.domain.util.getColorWithFullAlpha
@@ -32,5 +35,20 @@ fun CollectionWithMarkerRelation.toModel() = PhotoCollectionMarkerModel(
     title = marker.title,
     time = LocalDate.parse(collection.time),
     point = getPointFromJsonString(collection.mapPoint),
-    photos = emptyList()
+)
+
+fun MarkerEntity.toModel() = PhotoCollectionMarkerModel(
+    color = getColorWithFullAlpha(colorCode),
+    title = title
+)
+
+fun PhotoCollectionMarkerModel.toPhotoCollectionEntity() = PhotoCollectionEntity(
+    markerColorCode = color.toArgb(),
+    time = time.toString(),
+    mapPoint = "{latitude: ${point.latitude.value}, longitude: ${point.longitude.value}}",
+)
+
+fun PhotoCollectionMarkerModel.toMarkerEntity() = MarkerEntity(
+    title = title,
+    colorCode = color.toArgb(),
 )
