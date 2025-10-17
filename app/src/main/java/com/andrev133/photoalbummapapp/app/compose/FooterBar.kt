@@ -32,7 +32,12 @@ import com.andrev133.photoalbummapapp.app.compose.elem.CornerBarIconButton
 import com.andrev133.photoalbummapapp.app.ui.theme.AutoMediaAppTheme
 
 @Composable
-fun FooterBar(modifier: Modifier = Modifier) {
+fun FooterBar(
+    modifier: Modifier = Modifier,
+    onMarkerListClick: () -> Unit,
+    onCentralClick: () -> Unit,
+    onTravelClick: () -> Unit
+) {
     var size by remember { mutableStateOf(IntSize.Zero) }
 
     Row(
@@ -53,7 +58,7 @@ fun FooterBar(modifier: Modifier = Modifier) {
             modifier = cornerButtonModifier,
             icon = painterResource(id = R.drawable.ic_labels),
             arrangement = CornerBarButtonArrangement.START,
-            onClick = {}
+            onClick = onMarkerListClick
         )
 
         IconButton(
@@ -66,7 +71,7 @@ fun FooterBar(modifier: Modifier = Modifier) {
                     )
                 )
                 .padding(8.dp),
-            onClick = {}
+            onClick = onCentralClick
         ) {
             Icon(
                 modifier = Modifier
@@ -81,7 +86,7 @@ fun FooterBar(modifier: Modifier = Modifier) {
             modifier = cornerButtonModifier,
             icon = painterResource(id = R.drawable.ic_travel),
             arrangement = CornerBarButtonArrangement.END,
-            onClick = {}
+            onClick = onTravelClick
         )
     }
 }
@@ -93,7 +98,10 @@ fun FooterBarPreview() {
         FooterBar(
             modifier = Modifier
                 .width(400.dp)
-                .height(200.dp)
+                .height(200.dp),
+            onMarkerListClick = {},
+            onCentralClick = {},
+            onTravelClick = {}
         )
     }
 }
