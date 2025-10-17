@@ -22,7 +22,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.andrev133.photoalbummapapp.R
-import com.andrev133.photoalbummapapp.app.compose.util.darken
 import com.andrev133.photoalbummapapp.app.ui.theme.AutoMediaAppTheme
 import com.andrev133.photoalbummapapp.app.ui.theme.endRoundedRect
 import com.andrev133.photoalbummapapp.app.ui.theme.startRoundedRect
@@ -45,7 +44,7 @@ fun MarkerRowItem(
     ) {
         Icon(
             modifier = Modifier
-                .size(40.dp)
+                .size(60.dp)
                 .background(
                     color = Color.Black,
                     shape = MaterialTheme.shapes.startRoundedRect
@@ -58,7 +57,7 @@ fun MarkerRowItem(
 
         Box(
             modifier = Modifier
-                .height(40.dp)
+                .height(60.dp)
                 .fillMaxWidth()
                 .background(
                     brush = Brush.horizontalGradient(

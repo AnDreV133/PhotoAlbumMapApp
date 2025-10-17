@@ -6,7 +6,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpSize
@@ -16,15 +15,11 @@ import com.andrev133.photoalbummapapp.data.SharedPrefKeys
 import com.andrev133.photoalbummapapp.data.getSharedPrefByKey
 import com.andrev133.photoalbummapapp.data.setValue
 import com.andrev133.photoalbummapapp.domain.model.PhotoCollectionMarkerModel
-import com.andrev133.photoalbummapapp.domain.usecase.GetAllMarkers
-import com.andrev133.photoalbummapapp.domain.util.getColorWithFullAlpha
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.onEach
+import com.andrev133.photoalbummapapp.domain.usecase.GetAllMarkersUseCase
 import ru.sulgik.mapkit.compose.Placemark
 import ru.sulgik.mapkit.compose.PlacemarkState
 import ru.sulgik.mapkit.compose.YandexMap
 import ru.sulgik.mapkit.compose.YandexMapsComposeExperimentalApi
-import ru.sulgik.mapkit.compose.imageProvider
 import ru.sulgik.mapkit.compose.rememberCameraPositionState
 import ru.sulgik.mapkit.geometry.Point
 import ru.sulgik.mapkit.map.CameraPosition
@@ -34,7 +29,7 @@ import ru.sulgik.mapkit.map.CameraPosition
 @Composable
 fun MapView(
     modifier: Modifier = Modifier,
-    getAllMarkers: GetAllMarkers,
+    getAllMarkersUseCase: GetAllMarkersUseCase,
 
     ) {
     val context = LocalContext.current
@@ -63,7 +58,7 @@ fun MapView(
     }
 
     LaunchedEffect(Unit) {
-        getAllMarkers().collect { marker ->
+        getAllMarkersUseCase().collect { marker ->
             markerPositionList = marker
         }
     }
