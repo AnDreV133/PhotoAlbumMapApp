@@ -21,7 +21,7 @@ import com.andrev133.photoalbummapapp.data.entity.PhotoEntity
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun labelDao(): MarkerDao
+    abstract fun markerDao(): MarkerDao
     abstract fun photoCollectionDao(): PhotoCollectionMarkerDao
     abstract fun photoPathDao(): PhotoDao
 
