@@ -54,6 +54,9 @@ android {
 }
 
 dependencies {
+    // Opensource
+    implementation("io.mhssn:colorpicker:1.0.0")
+
     // JSON
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
