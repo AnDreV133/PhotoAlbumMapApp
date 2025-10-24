@@ -42,7 +42,7 @@ interface PhotoCollectionMarkerDao {
             INNER JOIN photo_collections ON markerColorCode = colorCode
         """
     )
-    fun getAllCollectionWithLabel(): Flow<List<CollectionWithMarkerRelation>>
+    fun getAllCollectionsWithMarker(): Flow<List<CollectionWithMarkerRelation>>
 
     @Transaction
     @Query(
