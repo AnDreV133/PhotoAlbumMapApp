@@ -2,6 +2,9 @@ package com.andrev133.photoalbummapapp.app.compose.util
 
 import androidx.annotation.FloatRange
 import androidx.compose.ui.graphics.Color
+import ru.sulgik.mapkit.geometry.Point
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 inline fun Color.darken(
     @FloatRange(from = 0.0, to = 1.0) darkenBy: Float = 0.3f
@@ -12,4 +15,11 @@ inline fun Color.darken(
         blue = blue * (1f - darkenBy),
         alpha = alpha
     )
+}
+
+fun Point.distanceTo(point: Point): Float {
+    return sqrt(
+        (latitude.value - point.latitude.value).pow(2.0)
+                + (longitude.value - point.longitude.value).pow(2.0)
+    ).toFloat()
 }
