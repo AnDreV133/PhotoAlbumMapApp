@@ -6,23 +6,28 @@ import com.andrev133.photoalbummapapp.data.entity.MarkerEntity
 import com.andrev133.photoalbummapapp.data.entity.PhotoCollectionEntity
 import com.andrev133.photoalbummapapp.data.relation.CollectionWithMarkerRelation
 import com.andrev133.photoalbummapapp.data.relation.FullCollectionRelation
+import com.andrev133.photoalbummapapp.domain.model.serialise.PointSerialized
 import com.andrev133.photoalbummapapp.domain.util.getColorWithFullAlpha
 import com.andrev133.photoalbummapapp.domain.util.getPointFromJsonString
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import ru.sulgik.mapkit.geometry.Point
 
-class PhotoCollectionMarkerModel(
+data class PhotoCollectionMarkerModel(
     val color: Color,
     val title: String,
+    val id: Long = 0,
     val time: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
     val point: Point = Point(0.0, 0.0),
     val photos: List<PhotoModel> = emptyList()
 )
 
 fun FullCollectionRelation.toModel() = PhotoCollectionMarkerModel(
+    id = collection.id,
     color = getColorWithFullAlpha(marker.colorCode),
     title = marker.title,
     time = LocalDate.parse(collection.time),
@@ -31,6 +36,7 @@ fun FullCollectionRelation.toModel() = PhotoCollectionMarkerModel(
 )
 
 fun CollectionWithMarkerRelation.toModel() = PhotoCollectionMarkerModel(
+    id = collection.id,
     color = getColorWithFullAlpha(marker.colorCode),
     title = marker.title,
     time = LocalDate.parse(collection.time),
@@ -43,9 +49,15 @@ fun MarkerEntity.toModel() = PhotoCollectionMarkerModel(
 )
 
 fun PhotoCollectionMarkerModel.toPhotoCollectionEntity() = PhotoCollectionEntity(
+    id = id,
     markerColorCode = color.toArgb(),
     time = time.toString(),
-    mapPoint = "{latitude: ${point.latitude.value}, longitude: ${point.longitude.value}}",
+    mapPoint = Json.encodeToString(
+        PointSerialized(
+            latitude = point.latitude.value,
+            longitude = point.longitude.value
+        )
+    )
 )
 
 fun PhotoCollectionMarkerModel.toMarkerEntity() = MarkerEntity(
