@@ -54,6 +54,9 @@ android {
 }
 
 dependencies {
+    // Coil
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
     // Opensource
     implementation("io.mhssn:colorpicker:1.0.0")
 

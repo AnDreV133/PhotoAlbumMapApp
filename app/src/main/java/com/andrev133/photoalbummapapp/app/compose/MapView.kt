@@ -44,6 +44,7 @@ fun MapView( // fixme recompose twice
     markers: List<PhotoCollectionMarkerModel>, // todo call recompose, but its not needed
     onAddMarker: (PhotoCollectionMarkerModel) -> Unit,
     onRemoveMarker: (PhotoCollectionMarkerModel) -> Unit,
+    onClickMarker: (PhotoCollectionMarkerModel) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -121,8 +122,8 @@ fun MapView( // fixme recompose twice
                 opacity = 0.8f,
                 zIndex = 1000f,
                 onTap = {
-                    modelForShowAlertDialog = model
-                    true // todo bind showing photo
+                    onClickMarker(model)
+                    true
                 },
                 state = PlacemarkState(
                     geometry = model.point,
