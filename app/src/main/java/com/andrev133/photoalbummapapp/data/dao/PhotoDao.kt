@@ -26,5 +26,5 @@ interface PhotoDao {
     suspend fun getPhotoById(id: Long): PhotoEntity?
 
     @Query("SELECT * FROM photos WHERE photoCollectionId = :photoCollectionId")
-    suspend fun getPhotoByCollectionId(photoCollectionId: Long): PhotoEntity?
+    fun getPhotoByCollectionId(photoCollectionId: Long): Flow<List<PhotoEntity>>
 }

@@ -7,6 +7,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import com.andrev133.photoalbummapapp.data.entity.PhotoCollectionEntity
+import com.andrev133.photoalbummapapp.data.entity.PhotoEntity
 import com.andrev133.photoalbummapapp.data.relation.CollectionWithMarkerRelation
 import com.andrev133.photoalbummapapp.data.relation.CollectionWithPhotosRelation
 import com.andrev133.photoalbummapapp.data.relation.FullCollectionRelation
@@ -64,5 +65,28 @@ interface PhotoCollectionMarkerDao {
     """
     )
     fun getFullCollectionByLocation(point: String): Flow<FullCollectionRelation?>
+
+    @Insert
+    suspend fun insertPhotos(photoPaths: List<PhotoEntity>)
+
+    @Query("DELETE FROM photos WHERE photoCollectionId = :collectionId")
+    suspend fun deletePhotosByCollectionId(collectionId: Long)
+
+    @Query("DELETE FROM photos WHERE photoCollectionId = :collectionId AND path in (:paths)")
+    suspend fun deletePhotosByCollectionIdAndPaths(collectionId: Long, paths: List<String>)
+
+    @Transaction
+    suspend fun updatePhotos(
+        collectionId: Long,
+        photos: List<PhotoEntity>
+    ) {
+        deletePhotosByCollectionId(collectionId)
+        insertPhotos(photos.map {
+            it.copy(photoCollectionId = collectionId)
+        })
+    }
+
+    @Query("SELECT * FROM photos WHERE photoCollectionId = :photoCollectionId")
+    fun getPhotosByCollectionId(photoCollectionId: Long): Flow<List<PhotoEntity>>
 }
 

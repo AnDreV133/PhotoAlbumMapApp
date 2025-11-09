@@ -1,6 +1,7 @@
 package com.andrev133.photoalbummapapp.app.compose
 
 import android.util.Log
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -22,6 +23,7 @@ import com.andrev133.photoalbummapapp.data.getSharedPrefByKey
 import com.andrev133.photoalbummapapp.data.setValue
 import com.andrev133.photoalbummapapp.domain.model.PhotoCollectionMarkerModel
 import ru.sulgik.mapkit.compose.CameraPositionState
+import ru.sulgik.mapkit.compose.MapConfig
 import ru.sulgik.mapkit.compose.MapEffect
 import ru.sulgik.mapkit.compose.Placemark
 import ru.sulgik.mapkit.compose.PlacemarkState
@@ -44,6 +46,7 @@ fun MapView( // fixme recompose twice
     markers: List<PhotoCollectionMarkerModel>, // todo call recompose, but its not needed
     onAddMarker: (PhotoCollectionMarkerModel) -> Unit,
     onRemoveMarker: (PhotoCollectionMarkerModel) -> Unit,
+    onClickMarker: (PhotoCollectionMarkerModel) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -119,10 +122,10 @@ fun MapView( // fixme recompose twice
         collectionMarkers.forEach { model ->
             Placemark(
                 opacity = 0.8f,
-                zIndex = 1000f,
+                zIndex = 100f,
                 onTap = {
-                    modelForShowAlertDialog = model
-                    true // todo bind showing photo
+                    onClickMarker(model)
+                    true
                 },
                 state = PlacemarkState(
                     geometry = model.point,

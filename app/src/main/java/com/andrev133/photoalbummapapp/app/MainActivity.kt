@@ -23,15 +23,22 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andrev133.photoalbummapapp.BuildConfig
 import com.andrev133.photoalbummapapp.app.compose.FooterBar
 import com.andrev133.photoalbummapapp.app.compose.MapView
-import com.andrev133.photoalbummapapp.app.compose.MarkerListDialog
 import com.andrev133.photoalbummapapp.app.compose.MarkerListDialogWithAdd
+import com.andrev133.photoalbummapapp.app.compose.PhotoViewerView
+import com.andrev133.photoalbummapapp.app.compose.elem.RequestCoarseLocationPermission
+import com.andrev133.photoalbummapapp.app.compose.elem.RequestReadStoragePermission
 import com.andrev133.photoalbummapapp.app.ui.theme.AutoMediaAppTheme
 import com.andrev133.photoalbummapapp.data.AppDatabase
+import com.andrev133.photoalbummapapp.domain.model.PhotoCollectionMarkerModel
 import com.andrev133.photoalbummapapp.domain.usecase.AddMarkerOnMapUseCase
+import com.andrev133.photoalbummapapp.domain.usecase.AddPhotosUseCase
 import com.andrev133.photoalbummapapp.domain.usecase.DeleteMarkerOnMapUseCase
+import com.andrev133.photoalbummapapp.domain.usecase.DeletePhotosUseCase
 import com.andrev133.photoalbummapapp.domain.usecase.GetAllCollectionsWithMarkerUseCase
 import com.andrev133.photoalbummapapp.domain.usecase.GetAllMarkersUseCase
+import com.andrev133.photoalbummapapp.domain.usecase.GetAllPhotosUseCase
 import com.andrev133.photoalbummapapp.domain.usecase.InsertMarkerUseCase
+import com.andrev133.photoalbummapapp.domain.usecase.UpdatePhotoCollectionUseCase
 import ru.sulgik.mapkit.MapKit
 import ru.sulgik.mapkit.compose.bindToLifecycleOwner
 import ru.sulgik.mapkit.compose.rememberAndInitializeMapKit
@@ -47,6 +54,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AutoMediaAppTheme {
+                RequestReadStoragePermission()
+                RequestCoarseLocationPermission()
+
                 MainScreen()
             }
         }
@@ -60,19 +70,29 @@ fun MainScreen() {
     val coroutineScope = rememberCoroutineScope()
 
     val db = AppDatabase.getInstance(LocalContext.current)
+
     val getAllMarkersUseCase = GetAllMarkersUseCase(db.markerDao())
     val getAllCollectionsWithMarkerUseCase =
         GetAllCollectionsWithMarkerUseCase(db.photoCollectionDao())
     val insertMarkerUseCase = InsertMarkerUseCase(db.markerDao(), coroutineScope)
     val addMarkerOnMapUseCase = AddMarkerOnMapUseCase(db.photoCollectionDao(), coroutineScope)
     val deleteMarkerUseCase = DeleteMarkerOnMapUseCase(db.photoCollectionDao(), coroutineScope)
+    val updatePhotoCollectionUseCase =
+        UpdatePhotoCollectionUseCase(db.photoCollectionDao(), coroutineScope)
+    val addPhotosUseCase = AddPhotosUseCase(db.photoCollectionDao(), coroutineScope)
+    val deletePhotosUseCase = DeletePhotosUseCase(db.photoCollectionDao(), coroutineScope)
+    val getAllPhotosUseCase = GetAllPhotosUseCase(db.photoCollectionDao())
 
-    var showMarkerListDialogWithAdd by remember { mutableStateOf(false) }
     val cameraPositionState = rememberCameraPositionState()
     val markers by getAllMarkersUseCase()
         .collectAsStateWithLifecycle(emptyList())
     val collectionMarkers by getAllCollectionsWithMarkerUseCase()
         .collectAsStateWithLifecycle(emptyList())
+
+    var showMarkerListDialogWithAdd by remember { mutableStateOf(false) }
+    var photoCollectionForShowPhotoViewer by remember {
+        mutableStateOf<PhotoCollectionMarkerModel?>(null)
+    }
 
     if (showMarkerListDialogWithAdd) {
         MarkerListDialogWithAdd(
@@ -93,6 +113,7 @@ fun MainScreen() {
                 cameraPositionState = cameraPositionState,
                 onAddMarker = { addMarkerOnMapUseCase(it) },
                 onRemoveMarker = { deleteMarkerUseCase(it) },
+                onClickMarker = { photoCollectionForShowPhotoViewer = it },
                 markers = markers
             )
         },
@@ -107,6 +128,27 @@ fun MainScreen() {
             )
         }
     )
+
+    if (photoCollectionForShowPhotoViewer != null) {
+        PhotoViewerView(
+            modifier = Modifier.fillMaxSize(),
+            model = photoCollectionForShowPhotoViewer!!,
+            photosFlow = getAllPhotosUseCase(photoCollectionForShowPhotoViewer!!),
+            onClose = { photoCollectionForShowPhotoViewer = null },
+            onInsertPhotos = {
+                addPhotosUseCase(
+                    photoCollectionForShowPhotoViewer!!,
+                    it
+                )
+            }, // TODO insert photos by index
+            onDeletePhoto = {
+                deletePhotosUseCase(
+                    photoCollectionForShowPhotoViewer!!,
+                    it
+                )
+            }
+        )
+    }
 }
 
 @Preview

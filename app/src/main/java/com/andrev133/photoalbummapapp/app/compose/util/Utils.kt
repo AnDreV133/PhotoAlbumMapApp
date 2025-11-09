@@ -6,7 +6,7 @@ import ru.sulgik.mapkit.geometry.Point
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-inline fun Color.darken(
+fun Color.darken(
     @FloatRange(from = 0.0, to = 1.0) darkenBy: Float = 0.3f
 ): Color {
     return copy(
