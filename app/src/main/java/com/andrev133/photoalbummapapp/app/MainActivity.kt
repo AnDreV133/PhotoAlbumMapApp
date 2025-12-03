@@ -23,8 +23,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andrev133.photoalbummapapp.BuildConfig
 import com.andrev133.photoalbummapapp.app.compose.FooterBar
 import com.andrev133.photoalbummapapp.app.compose.MapView
+import com.andrev133.photoalbummapapp.app.compose.MarkerListDialog
 import com.andrev133.photoalbummapapp.app.compose.MarkerListDialogWithAdd
 import com.andrev133.photoalbummapapp.app.compose.PhotoViewerView
+import com.andrev133.photoalbummapapp.app.compose.TravelModeView
 import com.andrev133.photoalbummapapp.app.compose.elem.RequestCoarseLocationPermission
 import com.andrev133.photoalbummapapp.app.compose.elem.RequestReadStoragePermission
 import com.andrev133.photoalbummapapp.app.ui.theme.AutoMediaAppTheme
@@ -34,6 +36,7 @@ import com.andrev133.photoalbummapapp.domain.usecase.AddMarkerOnMapUseCase
 import com.andrev133.photoalbummapapp.domain.usecase.AddPhotosUseCase
 import com.andrev133.photoalbummapapp.domain.usecase.DeleteMarkerOnMapUseCase
 import com.andrev133.photoalbummapapp.domain.usecase.DeletePhotosUseCase
+import com.andrev133.photoalbummapapp.domain.usecase.FilterCollectionsWithMarkerByMarkerColorUseCase
 import com.andrev133.photoalbummapapp.domain.usecase.GetAllCollectionsWithMarkerUseCase
 import com.andrev133.photoalbummapapp.domain.usecase.GetAllMarkersUseCase
 import com.andrev133.photoalbummapapp.domain.usecase.GetAllPhotosUseCase
@@ -49,6 +52,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         MapKit.setApiKey(BuildConfig.MAP_API_KEY)
+        MapKit.setLocale("Ru_ru")
         MapKit.initialize(this)
 
         enableEdgeToEdge()
@@ -74,6 +78,8 @@ fun MainScreen() {
     val getAllMarkersUseCase = GetAllMarkersUseCase(db.markerDao())
     val getAllCollectionsWithMarkerUseCase =
         GetAllCollectionsWithMarkerUseCase(db.photoCollectionDao())
+    val filterCollectionsWithMarkerByMarkerColorUseCase =
+        FilterCollectionsWithMarkerByMarkerColorUseCase()
     val insertMarkerUseCase = InsertMarkerUseCase(db.markerDao(), coroutineScope)
     val addMarkerOnMapUseCase = AddMarkerOnMapUseCase(db.photoCollectionDao(), coroutineScope)
     val deleteMarkerUseCase = DeleteMarkerOnMapUseCase(db.photoCollectionDao(), coroutineScope)
@@ -90,15 +96,27 @@ fun MainScreen() {
         .collectAsStateWithLifecycle(emptyList())
 
     var showMarkerListDialogWithAdd by remember { mutableStateOf(false) }
+    var showMarkerListDialogForTravel by remember { mutableStateOf(false) }
+    var photoCollectionForShowTravel by remember {
+        mutableStateOf<PhotoCollectionMarkerModel?>(null)
+    }
     var photoCollectionForShowPhotoViewer by remember {
         mutableStateOf<PhotoCollectionMarkerModel?>(null)
     }
 
     if (showMarkerListDialogWithAdd) {
         MarkerListDialogWithAdd(
+            models = markers,
             onDismiss = { showMarkerListDialogWithAdd = false },
-            onCompleteMarker = { model -> insertMarkerUseCase(model) },
-            models = markers
+            onCompleteMarker = { model -> insertMarkerUseCase(model) }
+        )
+    }
+
+    if (showMarkerListDialogForTravel) {
+        MarkerListDialog(
+            models = markers,
+            onDismiss = { showMarkerListDialogForTravel = false },
+            onClickItem = { model -> photoCollectionForShowTravel = model }
         )
     }
 
@@ -116,6 +134,21 @@ fun MainScreen() {
                 onClickMarker = { photoCollectionForShowPhotoViewer = it },
                 markers = markers
             )
+
+            photoCollectionForShowTravel?.let { model ->
+                showMarkerListDialogForTravel = false
+                TravelModeView(
+                    modifier = Modifier
+                        .padding(innerPadding),
+                    cameraPositionState = cameraPositionState,
+                    markerColor = model.color,
+                    models = filterCollectionsWithMarkerByMarkerColorUseCase.invoke(
+                        collectionMarkers,
+                        model.color
+                    ),
+                    onClose = { photoCollectionForShowTravel = null }
+                )
+            }
         },
         bottomBar = {
             FooterBar(
@@ -124,7 +157,7 @@ fun MainScreen() {
                     .fillMaxWidth(),
                 onMarkerListClick = { showMarkerListDialogWithAdd = true },
                 onCentralClick = {},
-                onTravelClick = {}
+                onTravelClick = { showMarkerListDialogForTravel = true }
             )
         }
     )
