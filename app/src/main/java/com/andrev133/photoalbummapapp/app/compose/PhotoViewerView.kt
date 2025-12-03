@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -38,6 +39,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -60,9 +62,9 @@ fun PhotoViewerView(
 ) {
     val scope = rememberCoroutineScope()
 
-    var currentScale by remember { mutableStateOf(1f) }
-    var currentOffsetX by remember { mutableStateOf(0f) }
-    var currentOffsetY by remember { mutableStateOf(0f) }
+    var currentScale by remember { mutableFloatStateOf(1f) }
+    var currentOffsetX by remember { mutableFloatStateOf(0f) }
+    var currentOffsetY by remember { mutableFloatStateOf(0f) }
     var showFileManager by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
 
@@ -121,7 +123,7 @@ fun PhotoViewerView(
                             translationY = currentOffsetY
                         }
                         .pointerInput(Unit) {
-                            detectVerticalDragGestures { change, dragAmount ->
+                            detectVerticalDragGestures { _, dragAmount ->
                                 if (dragAmount > 20) { // Порог срабатывания жеста
                                     scope.launch {
                                         pagerState.animateScrollToPage(pagerState.currentPage - 1)
@@ -253,9 +255,21 @@ private fun PhotoDeleteAlertDialog(
     onDismiss: () -> Unit
 ) {
     AlertDialog(
+        containerColor = MaterialTheme.colorScheme.surface,
         onDismissRequest = onDismiss,
-        title = { Text("Удаление фотографии") },
-        text = { Text("Вы уверены, что хотите удалить эту фотографию?") },
+        title = {
+            Text(
+                color = MaterialTheme.colorScheme.onSurface,
+                fontWeight = FontWeight.Bold,
+                text = "Удаление фотографии"
+            )
+        },
+        text = {
+            Text(
+                color = MaterialTheme.colorScheme.onSurface,
+                text = "Вы уверены, что хотите удалить эту фотографию?"
+            )
+        },
         confirmButton = {
             TextButton(
                 onClick = {
@@ -270,7 +284,7 @@ private fun PhotoDeleteAlertDialog(
             TextButton(
                 onClick = onDismiss
             ) {
-                Text("Отмена")
+                Text("Отмена", color = MaterialTheme.colorScheme.onSurface)
             }
         }
     )
@@ -288,12 +302,22 @@ fun PhotoViewerViewPreview() {
         )
     }
 
-    PhotoViewerView(
-        model = sampleModel,
-        onClose = { },
-        onInsertPhotos = { },
-        onDeletePhoto = { },
-        getPhotoModelFlow = { flowOf() },
-        modifier = Modifier.fillMaxSize()
-    )
+    MaterialTheme {
+        PhotoViewerView(
+            model = sampleModel,
+            onClose = { },
+            onInsertPhotos = { },
+            onDeletePhoto = { },
+            getPhotoModelFlow = { flowOf() },
+            modifier = Modifier.fillMaxSize()
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PhotoDeleteAlertDialogPreview() {
+    MaterialTheme {
+        PhotoDeleteAlertDialog({}, {})
+    }
 }

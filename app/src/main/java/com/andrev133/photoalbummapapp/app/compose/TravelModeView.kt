@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -33,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.andrev133.photoalbummapapp.R
 import com.andrev133.photoalbummapapp.domain.model.PhotoCollectionMarkerModel
 import ru.sulgik.mapkit.compose.CameraPositionState
+import ru.sulgik.mapkit.compose.rememberCameraPositionState
 
 @Composable
 fun TravelModeView(
@@ -159,20 +159,17 @@ fun TravelModeView(
 @Composable
 private fun TravelModeViewPreview() {
     MaterialTheme {
-//        Box(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .background(Color.DarkGray)
-//        ) {
-//            TravelModeView(
-//                markerColor = Color.Red,
-//                currentModel = PhotoCollectionMarkerModel(
-//                    color = Color.Red,
-//                    title = "Тестовый маркер",
-//                    photos = emptySet()
-//                ),
-//                onClose = { },
-//            )
-//        }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.DarkGray)
+        ) {
+            TravelModeView(
+                markerColor = Color.Red,
+                cameraPositionState = rememberCameraPositionState(),
+                models = emptyList(),
+                onClose = { },
+            )
+        }
     }
 }
