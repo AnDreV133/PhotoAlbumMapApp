@@ -1,6 +1,7 @@
 package com.andrev133.photoalbummapapp.app.compose
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -39,11 +40,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.andrev133.photoalbummapapp.app.compose.elem.getFileManagerLauncher
+import com.andrev133.photoalbummapapp.app.compose.util.serialize
+import com.andrev133.photoalbummapapp.app.compose.util.toUri
 import com.andrev133.photoalbummapapp.domain.model.PhotoCollectionMarkerModel
 import com.andrev133.photoalbummapapp.domain.model.PhotoModel
 import kotlinx.coroutines.flow.Flow
@@ -71,7 +76,10 @@ fun PhotoViewerView(
     BackHandler(onBack = onClose)
 
     val fileMangerLauncher = getFileManagerLauncher {
-        onInsertPhotos(it.map { uri -> "content://media${uri.path}" })
+        onInsertPhotos(
+            it.map { uri -> uri.serialize() }
+//            it.map { uri -> "content://media${uri.path}" }
+        )
     }
 
     LaunchedEffect(showFileManager) {
@@ -101,6 +109,7 @@ fun PhotoViewerView(
     Box(
         modifier = modifier
             .fillMaxSize()
+            .padding(top = 8.dp)
             .background(Color.Black)
     ) {
         HorizontalPager(
@@ -111,8 +120,10 @@ fun PhotoViewerView(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                AsyncImage(
-                    model = photos[page].path,
+                Image(
+                    painter = rememberAsyncImagePainter(
+                        model = photos[page].path.toUri()
+                    ),
                     contentDescription = "Фотография $page",
                     modifier = Modifier
                         .fillMaxSize()

@@ -130,7 +130,7 @@ fun MapView( // fixme recompose twice
                 state = PlacemarkState(
                     geometry = model.point,
                 ),
-                contentSize = DpSize(16.dp, 16.dp),
+                contentSize = DpSize(12.dp, 12.dp),
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_marker),

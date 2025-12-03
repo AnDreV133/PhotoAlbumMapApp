@@ -1,5 +1,6 @@
 package com.andrev133.photoalbummapapp.app.compose.util
 
+import android.net.Uri
 import androidx.annotation.FloatRange
 import androidx.compose.ui.graphics.Color
 import ru.sulgik.mapkit.geometry.Point
@@ -23,3 +24,9 @@ fun Point.distanceTo(point: Point): Float {
                 + (longitude.value - point.longitude.value).pow(2.0)
     ).toFloat()
 }
+
+// Сериализация: URI -> String
+fun Uri.serialize(): String = this.toString()
+
+// Десериализация: String -> URI
+fun String.toUri(): Uri? = Uri.parse(this)
