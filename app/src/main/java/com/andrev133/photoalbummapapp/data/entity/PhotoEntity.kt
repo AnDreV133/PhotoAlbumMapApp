@@ -19,7 +19,7 @@ import androidx.room.PrimaryKey
 )
 data class PhotoEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
+    val photoId: Long = 0,
     val photoCollectionId: Long,
     val path: String
 )

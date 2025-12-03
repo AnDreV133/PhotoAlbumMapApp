@@ -62,7 +62,6 @@ fun MapView( // fixme recompose twice
                     cameraUpdateReason: CameraUpdateReason,
                     finished: Boolean
                 ) {
-                    println("cameraPosition: $cameraPosition")
                 }
             }
         }
@@ -75,7 +74,9 @@ fun MapView( // fixme recompose twice
                     pointOnShowMarkerListDialog = point
                 }
 
-                override fun onMapLongTap(map: Map, point: Point) {}
+                override fun onMapLongTap(map: Map, point: Point) {
+
+                }
             }
         }
     }
@@ -122,7 +123,6 @@ fun MapView( // fixme recompose twice
         collectionMarkers.forEach { model ->
             Placemark(
                 opacity = 0.8f,
-                zIndex = 100f,
                 onTap = {
                     onClickMarker(model)
                     true
@@ -130,7 +130,7 @@ fun MapView( // fixme recompose twice
                 state = PlacemarkState(
                     geometry = model.point,
                 ),
-                contentSize = DpSize(24.dp, 24.dp),
+                contentSize = DpSize(16.dp, 16.dp),
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_marker),

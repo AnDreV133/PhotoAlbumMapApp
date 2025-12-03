@@ -22,7 +22,7 @@ interface PhotoDao {
     @Delete
     suspend fun deletePhotoPath(photoPath: PhotoEntity)
 
-    @Query("SELECT * FROM photos WHERE id = :id")
+    @Query("SELECT * FROM photos WHERE photoId = :id")
     suspend fun getPhotoById(id: Long): PhotoEntity?
 
     @Query("SELECT * FROM photos WHERE photoCollectionId = :photoCollectionId")

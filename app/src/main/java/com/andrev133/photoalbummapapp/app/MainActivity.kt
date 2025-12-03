@@ -129,21 +129,21 @@ fun MainScreen() {
         }
     )
 
-    if (photoCollectionForShowPhotoViewer != null) {
+    photoCollectionForShowPhotoViewer?.let { model ->
         PhotoViewerView(
             modifier = Modifier.fillMaxSize(),
-            model = photoCollectionForShowPhotoViewer!!,
-            photosFlow = getAllPhotosUseCase(photoCollectionForShowPhotoViewer!!),
+            model = model,
+            getPhotoModelFlow = getAllPhotosUseCase::invoke,
             onClose = { photoCollectionForShowPhotoViewer = null },
             onInsertPhotos = {
                 addPhotosUseCase(
-                    photoCollectionForShowPhotoViewer!!,
+                    model,
                     it
                 )
             }, // TODO insert photos by index
             onDeletePhoto = {
                 deletePhotosUseCase(
-                    photoCollectionForShowPhotoViewer!!,
+                    model,
                     it
                 )
             }

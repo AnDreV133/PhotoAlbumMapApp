@@ -3,7 +3,7 @@ package com.andrev133.photoalbummapapp.domain.usecase
 import com.andrev133.photoalbummapapp.data.dao.PhotoCollectionMarkerDao
 import com.andrev133.photoalbummapapp.domain.model.PhotoCollectionMarkerModel
 import com.andrev133.photoalbummapapp.domain.model.PhotoModel
-import com.andrev133.photoalbummapapp.domain.model.toPhotoCollectionEntity
+import com.andrev133.photoalbummapapp.domain.model.toModel
 import com.andrev133.photoalbummapapp.domain.model.toPhotosEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -21,13 +21,15 @@ class AddPhotosUseCase(
                 .filterNotNull()
                 .map { path -> PhotoModel(path) }
 
-            val newModel = model.copy(
-                photos = clearedPaths.toSet()
-            )
+            val newPhotos = dao.getFullCollectionById(model.id)
+                .toModel()
+                .photos + clearedPaths.toSet()
 
             dao.updatePhotos(
-                newModel.id,
-                newModel.toPhotosEntity()
+                model.id,
+                model
+                    .copy(photos = newPhotos)
+                    .toPhotosEntity()
             )
         }
     }

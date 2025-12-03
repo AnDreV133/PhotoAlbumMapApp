@@ -2,7 +2,6 @@ package com.andrev133.photoalbummapapp.app.compose
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -247,10 +246,10 @@ fun PhotoViewerView(
 fun PhotoViewerView(
     modifier: Modifier = Modifier,
     model: PhotoCollectionMarkerModel,
-    photosFlow: Flow<List<PhotoModel>>,
-    onClose: () -> Unit,
+    getPhotoModelFlow: (PhotoCollectionMarkerModel) -> Flow<List<PhotoModel>>,
     onInsertPhotos: (List<String?>) -> Unit,
-    onDeletePhoto: (List<String>) -> Unit
+    onDeletePhoto: (List<String>) -> Unit,
+    onClose: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
@@ -264,7 +263,6 @@ fun PhotoViewerView(
         onInsertPhotos(it.map { uri -> "content://media${uri.path}" })
     }
 
-    // Автоматический запуск файлового менеджера когда showFileManager = true
     LaunchedEffect(showFileManager) {
         if (showFileManager) {
             fileMangerLauncher()
@@ -272,7 +270,7 @@ fun PhotoViewerView(
         }
     }
 
-    val photos by photosFlow.collectAsState(model.photos.toList())
+    val photos by getPhotoModelFlow(model).collectAsState(model.photos.toList())
 
     val pagerState = rememberPagerState(
         initialPage = 0,
@@ -465,10 +463,8 @@ fun PhotoViewerView(
                 }
 
                 // Кнопка удаления показывается когда есть выбранные фото ИЛИ когда нет выбранных но есть фото
-                if (selectedPhotosForDeletion.isNotEmpty() ||
-                    (selectedPhotosForDeletion.isEmpty() && photos.isNotEmpty())
+                if (selectedPhotosForDeletion.isNotEmpty() || photos.isNotEmpty()
                 ) {
-
                     IconButton(
                         onClick = {
                             if (selectedPhotosForDeletion.isNotEmpty()) {
@@ -556,7 +552,7 @@ fun PhotoViewerViewPreview() {
         onClose = { },
         onInsertPhotos = { },
         onDeletePhoto = { },
-        photosFlow = flowOf(),
+        getPhotoModelFlow = { flowOf() },
         modifier = Modifier.fillMaxSize()
     )
 }
