@@ -43,7 +43,6 @@ interface PhotoCollectionMarkerDao {
             INNER JOIN markers m ON pc.markerColorCode = m.colorCode
             LEFT JOIN photos p ON p.photoCollectionId = pc.id
             WHERE pc.id = :id
-            
             LIMIT 1
         """
     )
@@ -73,7 +72,7 @@ interface PhotoCollectionMarkerDao {
         """
         SELECT * FROM photo_collections pc
             INNER JOIN markers m ON pc.markerColorCode = m.colorCode
-            INNER JOIN photos p ON p.photoCollectionId = pc.id
+            LEFT JOIN photos p ON p.photoCollectionId = pc.id
             WHERE mapPoint = :point LIMIT 1
     """
     )
